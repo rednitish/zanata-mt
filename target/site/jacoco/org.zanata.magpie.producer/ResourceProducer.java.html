@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResourceProducer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mt-server</a> &gt; <a href="index.source.html" class="el_package">org.zanata.magpie.producer</a> &gt; <span class="el_source">ResourceProducer.java</span></div><h1>ResourceProducer.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2017, Red Hat, Inc. and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package org.zanata.magpie.producer;
+
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import com.google.common.annotations.VisibleForTesting;
+import org.infinispan.Cache;
+import org.infinispan.manager.CacheContainer;
+import org.zanata.magpie.annotation.ClusteredCache;
+
+/**
+ * @author Patrick Huang &lt;a href=&quot;mailto:pahuang@redhat.com&quot;&gt;pahuang@redhat.com&lt;/a&gt;
+ */
+@ApplicationScoped
+<span class="fc" id="L39">public class ResourceProducer {</span>
+
+    @Resource(lookup = &quot;java:jboss/infinispan/container/web&quot;)
+    private CacheContainer webCacheManager;
+
+    private EntityManager em;
+
+    public static final String REPLICATE_CACHE = &quot;repl&quot;;
+
+
+    @Produces
+    @ClusteredCache(REPLICATE_CACHE)
+    public Cache&lt;String, String&gt; initialPasswordCache() {
+        // this cache is defined in the standalone-openshift.xml
+<span class="fc" id="L53">        return webCacheManager.getCache(REPLICATE_CACHE);</span>
+    }
+
+    @PersistenceContext
+    protected void setEntityManager(EntityManager em) {
+<span class="fc" id="L58">        this.em = em;</span>
+<span class="fc" id="L59">    }</span>
+
+    @Produces
+    @RequestScoped
+    protected EntityManager getEntityManager() {
+<span class="fc" id="L64">        return em;</span>
+    }
+
+
+    @VisibleForTesting
+    protected void setWebCacheManager(CacheContainer webCacheManager) {
+<span class="fc" id="L70">        this.webCacheManager = webCacheManager;</span>
+<span class="fc" id="L71">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="7.2">
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/service/ConfigurationService.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/service/MTStartup.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/service/EventRecordingService.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/AccountResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/LanguagesResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/DocumentResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/DocumentsResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/InfoResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/BackendResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/service/impl/ReportingResourceImpl.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/InputStreamStreamingOutput.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/ValidatePayloadInterceptor.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/security/CheckRoleDecisionVoter.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/security/SecurityInterceptor.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/api/ValidatePayload.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/event/AccountCreated.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/filter/PoFileAdapter.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/filter/TranslationFileAdapter.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/MTApplication.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/servlet/APIResponseFilter.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/servlet/JavaMelodyFilter.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/action/FrontendAssets.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/action/FrontendManifest.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/exception/MTExceptionMapper.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/exception/AccessDeniedExceptionMapper.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/exception/BadRequestExceptionMapper.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/exception/DataConstraintViolationExceptionMapper.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/annotation/EnvVariableProducer.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/annotation/CheckRole.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/util/UrlUtil.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/producer/ValidatorProducer.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/java/org/zanata/magpie/producer/ResourceProducer.java">
+</file>
+<file name="/home/nisharma/Desktop/gitRepo/zanata-mt/server/src/main/resources/build.properties">
+</file>
+</checkstyle>

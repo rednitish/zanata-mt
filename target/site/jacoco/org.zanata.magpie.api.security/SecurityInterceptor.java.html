@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityInterceptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mt-server</a> &gt; <a href="index.source.html" class="el_package">org.zanata.magpie.api.security</a> &gt; <span class="el_source">SecurityInterceptor.java</span></div><h1>SecurityInterceptor.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2017, Red Hat, Inc. and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package org.zanata.magpie.api.security;
+
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.zanata.magpie.annotation.InitialPassword;
+import org.zanata.magpie.api.APIConstant;
+import org.zanata.magpie.api.AuthenticatedAccount;
+import org.zanata.magpie.api.service.impl.AccountResourceImpl;
+import org.zanata.magpie.model.Account;
+import org.zanata.magpie.model.AccountType;
+import org.zanata.magpie.model.Role;
+import org.zanata.magpie.service.AccountService;
+
+import com.google.common.collect.Sets;
+
+import static org.zanata.magpie.api.service.impl.AccountResourceImpl.AUTH_HEADER;
+
+@javax.ws.rs.ext.Provider
+@RequestScoped
+public class SecurityInterceptor implements ContainerRequestFilter {
+<span class="fc" id="L55">    private static final Logger log =</span>
+<span class="fc" id="L56">            LoggerFactory.getLogger(SecurityInterceptor.class);</span>
+
+    private Provider&lt;String&gt; initialPassword;
+    private AccountService accountService;
+    private AccountResourceImpl accountResource;
+    private AuthenticatedAccount authenticatedAccount;
+
+    // list of api url that does not require authentication
+    private static ImmutableList&lt;String&gt; PUBLIC_API;
+
+    static {
+<span class="fc" id="L67">        PUBLIC_API = ImmutableList.of(&quot;/api/info&quot;, &quot;/api/account/login&quot;);</span>
+<span class="fc" id="L68">    }</span>
+
+    @Inject
+    public SecurityInterceptor(
+            @InitialPassword Provider&lt;String&gt; initialPassword,
+            AccountService accountService,
+            AuthenticatedAccount authenticatedAccount,
+<span class="fc" id="L75">            AccountResourceImpl accountResource) {</span>
+<span class="fc" id="L76">        this.initialPassword = initialPassword;</span>
+<span class="fc" id="L77">        this.accountService = accountService;</span>
+<span class="fc" id="L78">        this.accountResource = accountResource;</span>
+<span class="fc" id="L79">        this.authenticatedAccount = authenticatedAccount;</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public void filter(ContainerRequestContext requestContext) {
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (isPublicAPI(</span>
+<span class="fc" id="L85">                requestContext.getUriInfo().getRequestUri().getPath())) {</span>
+<span class="fc" id="L86">            return;</span>
+        }
+        // try to authenticate with cookie
+<span class="fc" id="L89">        Cookie auth = requestContext.getCookies().get(AUTH_HEADER);</span>
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">        if (auth != null &amp;&amp; StringUtils.isNotBlank(auth.getValue())) {</span>
+<span class="fc" id="L91">            Response response = accountResource.login(auth.getValue());</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (response.getStatus() == Response.Status.OK.getStatusCode()) {</span>
+<span class="fc" id="L93">                return;</span>
+            }
+        }
+
+        // try to authenticate with request headers
+<span class="fc" id="L98">        String username =</span>
+<span class="fc" id="L99">                requestContext.getHeaderString(APIConstant.HEADER_USERNAME);</span>
+<span class="fc" id="L100">        String password =</span>
+<span class="fc" id="L101">                requestContext.getHeaderString(APIConstant.HEADER_API_KEY);</span>
+<span class="pc bpc" id="L102" title="1 of 4 branches missed.">        if (username != null &amp;&amp; password != null) {</span>
+<span class="fc" id="L103">            Optional&lt;Account&gt; account =</span>
+<span class="fc" id="L104">                    tryAuthenticate(username, password, requestContext);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (account.isPresent()) {</span>
+<span class="fc" id="L106">                log.debug(&quot;authenticated {}&quot;, username);</span>
+<span class="fc" id="L107">                authenticatedAccount.setAuthenticatedAccount(account.get());</span>
+<span class="fc" id="L108">                authenticatedAccount.setAuthenticatedUsername(username);</span>
+<span class="fc" id="L109">                return;</span>
+            }
+        }
+<span class="fc" id="L112">        requestContext</span>
+<span class="fc" id="L113">                .abortWith(Response.status(Status.UNAUTHORIZED).build());</span>
+<span class="fc" id="L114">    }</span>
+
+    private Optional&lt;Account&gt; tryAuthenticate(String username, String passwordHash,
+            ContainerRequestContext requestContext) {
+<span class="fc" id="L118">        String initialPass = initialPassword.get();</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (initialPass == null) {</span>
+<span class="fc" id="L120">            return accountService.authenticate(username, passwordHash);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        } else if (&quot;admin&quot;.equals(username)</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                &amp;&amp; Objects.equals(passwordHash, initialPass)) {</span>
+<span class="fc" id="L123">            log.info(&quot;authenticating using initial password&quot;);</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if (isAccessingAccountCreation(requestContext)) {</span>
+<span class="fc" id="L126">                Account initialAdmin = new Account(&quot;initial&quot;,</span>
+                    &quot;magpie@zanata.org&quot;, username, passwordHash, AccountType.Normal,
+<span class="fc" id="L128">                    Sets.newHashSet(Role.admin));</span>
+<span class="fc" id="L129">                return Optional.of(initialAdmin);</span>
+            } else {
+<span class="fc" id="L131">                log.warn(</span>
+                        &quot;initial password is only allowed to create account. Please create an admin account first.&quot;);
+            }
+        }
+<span class="fc" id="L135">        return Optional.empty();</span>
+    }
+
+    private boolean
+            isAccessingAccountCreation(ContainerRequestContext requestContext) {
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        return requestContext.getUriInfo().getPath().equals(&quot;/account&quot;)</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                &amp;&amp; requestContext.getMethod().equals(&quot;POST&quot;);</span>
+    }
+
+    private boolean isPublicAPI(String uri) {
+<span class="fc" id="L145">        return PUBLIC_API.contains(uri);</span>
+    }
+
+    @SuppressWarnings(&quot;unused&quot;)
+<span class="nc" id="L149">    public SecurityInterceptor() {</span>
+<span class="nc" id="L150">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
